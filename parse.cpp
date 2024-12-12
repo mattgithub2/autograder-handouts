@@ -13,22 +13,6 @@ auto get_path(std::string &anchor) -> std::optional<std::string>;
 
 auto get_file_name(std::string &anchor) -> std::string;
 
-
-// need to get the auth cookie from the browser
-// run -- wget --load-cookies cookies.txt --no-check-certificate --output-file index.html "url"
-
-// Manual processes:
-//  Get the assignment url
-//  get the seesion id cookie.
-
-
-// TODO
-// take the assignement url as arg?
-// transfer the assets and filenames to a bash file
-// Run wget on all
-
-// DONE
-// Got where the list starts
 int main(int argc, char **argv) {
     
     if (argc == 0) {
