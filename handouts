@@ -48,3 +48,4 @@ done
 
 [ -f "$PROJECT_DIR/files.txt" ] && rm "$PROJECT_DIR/files.txt"
 [ -f "$PROJECT_DIR/index.html" ] && rm "$PROJECT_DIR/index.html"
+[ -f "$PROJECT_DIR/parse.o" ] && rm "$PROJECT_DIR/parse.o"
