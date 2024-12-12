@@ -1,0 +1,50 @@
+#! /bin/sh
+ASSIGNMENT_PAGE=$1
+cookie=$2
+BASE_URL='https://babbage.cs.niu.edu:16710'
+PROJECT_DIR="$HOME/autograder-handouts"
+
+# TODO 
+# Figure out how to automate getting the session id cookie
+# Find a better way to get the url
+die () {
+    echo >&2 "$@"
+    exit 1
+}
+
+[ "$#" -eq 2 ] || die "2 argument required, $# provided. USAGE: handouts assignment-url AGSESSID cookie value"
+
+
+wget --header="Cookie: $cookie" --ca-certificate="$PROJECT_DIR/cs-niu-edu-chain.pem" "$ASSIGNMENT_PAGE" --output-document="$PROJECT_DIR/index.html"
+
+if [ ! -f "$PROJECT_DIR/parse.o" ]; then 
+    g++ "$PROJECT_DIR/parse.cpp -o $PROJECT_DIR/parse.o -std=c++17"
+fi
+
+"$PROJECT_DIR/parse.o" "$PROJECT_DIR/index.html"
+
+mapfile -t files < files.txt
+declare -A urls
+declare -A names
+
+for i in ${files[@]}; do
+    url="${i%%:*}"
+    filename="${i#*:}"
+
+    urls[$i]="$BASE_URL$url"
+    names[$BASE_URL$url]="$filename"
+done
+
+if [ ! -d "$PWD/files" ]; then
+    mkdir "$PWD/files"
+fi
+
+cd files
+
+for url in "${urls[@]}" ; do
+    filename="${names[$url]}"
+    wget --header="Cookie: $cookie" --ca-certificate="$PROJECT_DIR/cs-niu-edu-chain.pem" "$url" --output-document="$filename" || die "failed to download $url"
+done
+
+[ -f "$PROJECT_DIR/files.txt" ] && rm "$PROJECT_DIR/files.txt"
+[ -f "$PROJECT_DIR/index.html" ] && rm "$PROJECT_DIR/index.html"
